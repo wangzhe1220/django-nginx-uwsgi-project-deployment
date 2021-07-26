@@ -15,8 +15,8 @@
 建议使用pip安装，比较简单
 
 ## 安装nginx
-- yum直接安装（我是centOS）
-  yum install nginx
+- yum直接安装（我是centOS）  
+  `yum install nginx`
   
 ## django项目
 自备
