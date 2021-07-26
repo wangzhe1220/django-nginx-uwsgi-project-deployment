@@ -6,12 +6,18 @@
   `pip3 install uwsgi`
 - 方法二：二进制文件安装  
   ```
+  curl http://uwsgi.it/install | bash -s default /usr/local/uwsgi
   wget http://projects.unbit.it/downloads/uwsgi-latest.tar.gz
   tar zxvf uwsgi-latest.tar.gz
   cd uwsgi-latest
   make
   ```
-  或
-  `curl http://uwsgi.it/install | bash -s default /usr/local/uwsgi`
-
 建议使用pip安装，比较简单
+
+## 安装nginx
+- yum直接安装（我是centOS）
+  yum install nginx
+  
+## django项目
+自备
+
