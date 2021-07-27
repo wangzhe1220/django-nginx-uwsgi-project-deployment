@@ -25,7 +25,19 @@
 ### 测试django项目能否正确运行  
 运行失败的项目是无法整合的，使用`python manage.py runserver 0.0.0.0:8000`命令尝试在8000端口运行一下，如果浏览器输入地址+:8000可以正常访问，即使静态资源全部404，我们依然可以认为运行成功。  
 ### django uWSGI app  
+uWSGI在django以app的方式被识别，app文件代码（这个文件新建项目时应该就会自带）：  
+```
+import os
 
+from django.core.wsgi import get_wsgi_application
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
+
+application = get_wsgi_application()
+
+```
+django settings.py uwsgi配置：
+`WSGI_APPLICATION = 'project.wsgi.application'`  
 ### 配置uWSGI 
 uWSGI的配置非常简单，一个uwsgi.ini文件可以完成所有常用参数的配置。建议将uwsgi.ini放在django项目中，便于版本管理。 
 uwsgi.ini 示例：  
@@ -90,6 +102,40 @@ pidfile=%(confdir)/uwsgi_confs/uwsgi.pid
 django一般有1~2个静态资源文件夹，分别为static和media。  
 在django开发中，一般使用`python manage.py collectstatic`收集静态资源，在settings.py控制静态资源路径，并且使用urls.py来访问静态资源链接。 有了nginx对静态资源的接管，可以省略这些步骤。   
 但是我们依然要获得django静态资源文件夹的绝对路径，我的是`/mnt/mol-ci/static-file/static`,`/mnt/mol-ci/static-file/media`  。  
+### nginx配置  
+/etc/conf.d文件夹下建立一个配置文件test.conf:  
+```
+server {
+  listen       80;
+  listen       [::]:80;
+  server_name  yourip.test.com;
+
+
+  # 项目是前后端分离，所以根目录直接选前端首页
+   location / {
+    root  /usr/share/nginx/html/master;
+    index index.html index.htm;
+    try_files $uri $uri/ /index.html;
+  }
+  
+  # 根据项目url分发方式在这里设置RESTful api转发
+    location /api/ {
+    proxy_pass http://localhost:8002;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  }
+
+  # 静态文件static
+  location /static/ {
+    alias /mnt/mol-ci/static-file/staticp/;
+  }
+  # 静态文件media
+  location /media/ {
+    alias /mnt/mol-ci/static-file/media/;
+  }
+
+```
 
 
 
