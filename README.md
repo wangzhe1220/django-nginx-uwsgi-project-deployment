@@ -24,6 +24,8 @@
 ## 进行整合  
 ### 测试django项目能否正确运行  
 运行失败的项目是无法整合的，使用`python manage.py runserver 0.0.0.0:8000`命令尝试在8000端口运行一下，如果浏览器输入地址+:8000可以正常访问，即使静态资源全部404，我们依然可以认为运行成功。  
+### django uWSGI app  
+
 ### 配置uWSGI 
 uWSGI的配置非常简单，一个uwsgi.ini文件可以完成所有常用参数的配置。建议将uwsgi.ini放在django项目中，便于版本管理。 
 uwsgi.ini 示例：  
@@ -83,10 +85,11 @@ pidfile=%(confdir)/uwsgi_confs/uwsgi.pid
 # stats=%(confdir)/uwsgi_conf/uwsgi.status
 # stats = 127.0.0.1:9001
 ```
-注意到uwsgi.ini中的confdir了吗？这个文件夹需要事先新建好，用来存放uwsgi运行的log和pid文件，我个人建议confdir不放在django项目中，与django平级存放。
+>> 注意!confdir需要事先新建，用来存放uwsgi运行的log和pid文件。我这里使用的是http方式启动uWSGI，所以nginx的配置和常见nginx+uWSGI有区别。
 ### django静态资源文件夹 
 django一般有1~2个静态资源文件夹，分别为static和media。  
 在django开发中，一般使用`python manage.py collectstatic`收集静态资源，在settings.py控制静态资源路径，并且使用urls.py来访问静态资源链接。 有了nginx对静态资源的接管，可以省略这些步骤。   
 但是我们依然要获得django静态资源文件夹的绝对路径，我的是`/mnt/mol-ci/static-file/static`,`/mnt/mol-ci/static-file/media`  。  
+
 
 
