@@ -138,7 +138,7 @@ server {
 ```
 ### 启动项目
 启动uWSGI: `uwsgi --ini /yourpath/uwsgi.ini`  
-启动nginx: `systemctl start nginx`（刚装上从未启动过） `nginx -s reload`（以前就装过）
+启动nginx: `systemctl start nginx`（刚装上从未启动过） `nginx -s reload`（以前就装过） 
 
 
 
